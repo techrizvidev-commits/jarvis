@@ -71,7 +71,7 @@ body{background:#010409;color:#d8ecf7;font-family:'Segoe UI',Inter,Arial,sans-se
 .today li{list-style:none;display:flex;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid rgba(125,216,255,.10);font-size:13px;color:#cfe6f2}
 .today li:last-child{border-bottom:0}
 .today li svg{width:15px;height:15px;stroke:#7dd8ff;fill:none;stroke-width:1.7;flex:none}
-.today li span{margin-left:auto;color:#fff}
+.today li span.val{margin-left:auto;color:#fff}
 /* ---- centre: robot ---- */
 .center{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;min-width:0}
 .robotStage{position:relative;width:min(430px,52vh);aspect-ratio:1;display:flex;align-items:center;justify-content:center}
@@ -117,30 +117,30 @@ body{background:#010409;color:#d8ecf7;font-family:'Segoe UI',Inter,Arial,sans-se
 <div class="ui">
 <header class="top">
 <div class="brand">JARVIS <span>AI ASSISTANT</span></div>
-<div class="online"><span id="topWeather">Karachi, Pakistan</span> &nbsp; <b>● ONLINE</b>
+<div class="online"><span id="topWeather">Karachi, Pakistan</span> &nbsp; <b>● <span data-i18n="online">ONLINE</span></b>
 <button class="gear" onclick="openPanel('settingsPanel')" title="Settings">⚙</button></div>
 </header>
 
 <div class="mid">
 <!-- LEFT -->
 <div class="col">
-<div class="card"><h3>GLOBAL<br>INFORMATION<br>ACCESS</h3>
+<div class="card"><h3 data-i18n-html="globalAccess">GLOBAL<br>INFORMATION<br>ACCESS</h3>
 <div class="globeWrap">
 <div class="globe"><svg viewBox="0 0 100 100"><g class="spin"><ellipse cx="50" cy="50" rx="46" ry="46" fill="none" stroke="#4fc3ff" stroke-width="1" opacity=".7"/><ellipse cx="50" cy="50" rx="20" ry="46" fill="none" stroke="#4fc3ff" stroke-width="1" opacity=".7"/><ellipse cx="50" cy="50" rx="38" ry="46" fill="none" stroke="#4fc3ff" stroke-width=".7" opacity=".5"/><line x1="4" y1="50" x2="96" y2="50" stroke="#4fc3ff" stroke-width=".7" opacity=".5"/><ellipse cx="50" cy="50" rx="46" ry="16" fill="none" stroke="#4fc3ff" stroke-width=".7" opacity=".5"/></g><circle cx="38" cy="42" r="2.4" fill="#bfeaff"/><circle cx="58" cy="58" r="2" fill="#bfeaff"/><circle cx="52" cy="34" r="1.8" fill="#7dd8ff"/><circle cx="66" cy="44" r="1.6" fill="#7dd8ff"/></svg></div>
-<div class="globeNote">LIVE FEED<br>WORLD GRID<br><span id="clockMini" style="color:#fff">--:--:--</span></div>
+<div class="globeNote"><span data-i18n="liveFeed">LIVE FEED</span><br><span data-i18n="worldGrid">WORLD GRID</span><br><span id="clockMini" style="color:#fff">--:--:--</span></div>
 </div></div>
 
-<div class="card"><h3>LISTENING...</h3><div class="wave" id="wave"></div><p class="listenState" id="listenState">Tap the microphone and speak, or type below.</p></div>
+<div class="card"><h3 data-i18n="listening">LISTENING...</h3><div class="wave" id="wave"></div><p class="listenState" id="listenState" data-i18n="listenHint">Tap the microphone and speak, or type below.</p></div>
 
 <div class="card"><h3>COMMANDS</h3>
-<button class="cmd" data-cmd="open chrome"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg><span>OPEN APPS</span></button>
-<button class="cmd" data-cmd="search jarvis on google"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><line x1="15.5" y1="15.5" x2="21" y2="21"/></svg><span>SEARCH WEB</span></button>
-<button class="cmd" data-cmd="system info"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg><span>CONTROL SYSTEM</span></button>
-<button class="cmd" data-cmd="play lofi music"><svg viewBox="0 0 24 24"><path d="M9 18V5l10-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg><span>PLAY MUSIC</span></button>
-<button class="cmd" data-cmd="weather karachi"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/></svg><span>GET INFORMATION</span></button>
-<button class="cmd" data-cmd="open downloads"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>MANAGE FILES</span></button>
-<button class="cmd" data-cmd="note test note from Jarvis"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 1 0-2.3 5.1L21 21l-2-3.7z"/></svg><span>AUTOMATE TASKS</span></button>
-<button class="cmd" onclick="openQr()"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="3" height="3"/><rect x="18" y="18" width="3" height="3"/></svg><span>CONNECT PHONE</span></button>
+<button class="cmd" data-cmd="open chrome"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg><span data-i18n="cmdOpenApps">OPEN APPS</span></button>
+<button class="cmd" data-cmd="search jarvis on google"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><line x1="15.5" y1="15.5" x2="21" y2="21"/></svg><span data-i18n="cmdSearch">SEARCH WEB</span></button>
+<button class="cmd" data-cmd="system info"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg><span data-i18n="cmdSystem">CONTROL SYSTEM</span></button>
+<button class="cmd" data-cmd="play lofi music"><svg viewBox="0 0 24 24"><path d="M9 18V5l10-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg><span data-i18n="cmdMusic">PLAY MUSIC</span></button>
+<button class="cmd" data-cmd="weather karachi"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/></svg><span data-i18n="cmdInfo">GET INFORMATION</span></button>
+<button class="cmd" data-cmd="open downloads"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span data-i18n="cmdFiles">MANAGE FILES</span></button>
+<button class="cmd" data-cmd="note test note from Jarvis"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 1 0-2.3 5.1L21 21l-2-3.7z"/></svg><span data-i18n="cmdTasks">AUTOMATE TASKS</span></button>
+<button class="cmd" onclick="openQr()"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="3" height="3"/><rect x="18" y="18" width="3" height="3"/></svg><span data-i18n="cmdConnect">CONNECT PHONE</span></button>
 </div>
 </div>
 
@@ -157,55 +157,59 @@ body{background:#010409;color:#d8ecf7;font-family:'Segoe UI',Inter,Arial,sans-se
 <div class="card"><div class="globeWrap">
 <div class="globe" style="width:84px;height:84px"><svg viewBox="0 0 100 100"><g class="spin"><ellipse cx="50" cy="50" rx="46" ry="46" fill="none" stroke="#4fc3ff" stroke-width="1" opacity=".7"/><ellipse cx="50" cy="50" rx="20" ry="46" fill="none" stroke="#4fc3ff" stroke-width="1" opacity=".7"/><line x1="4" y1="50" x2="96" y2="50" stroke="#4fc3ff" stroke-width=".7" opacity=".5"/></g><circle cx="40" cy="40" r="2.4" fill="#bfeaff"/><circle cx="60" cy="60" r="2" fill="#bfeaff"/></svg></div>
 <div class="check" id="checklist">
-<div data-k="ANALYZING"><i></i>ANALYZING</div>
-<div data-k="PROCESSING"><i></i>PROCESSING</div>
-<div data-k="LEARNING"><i></i>LEARNING</div>
-<div data-k="ADAPTING"><i></i>ADAPTING</div>
-<div data-k="READY" class="on"><i></i>READY</div>
+<div><i></i><span data-i18n="analyzing">ANALYZING</span></div>
+<div><i></i><span data-i18n="processing">PROCESSING</span></div>
+<div><i></i><span data-i18n="learning">LEARNING</span></div>
+<div><i></i><span data-i18n="adapting">ADAPTING</span></div>
+<div class="on"><i></i><span data-i18n="ready">READY</span></div>
 </div></div></div>
 
-<div class="card"><h3>SYSTEM STATUS</h3>
+<div class="card"><h3 data-i18n="systemStatus">SYSTEM STATUS</h3>
 <div class="bar"><label><span>CPU</span><span id="cpuV">24%</span></label><div class="track"><div class="fill" id="cpuB" style="width:24%"></div></div></div>
 <div class="bar"><label><span>RAM</span><span id="ramV">42%</span></label><div class="track"><div class="fill" id="ramB" style="width:42%"></div></div></div>
 <div class="bar"><label><span>STORAGE</span><span id="stoV">61%</span></label><div class="track"><div class="fill" id="stoB" style="width:61%"></div></div></div>
 <div class="bar"><label><span>NETWORK</span><span id="netV">86%</span></label><div class="track"><div class="fill" id="netB" style="width:86%"></div></div></div>
 </div>
 
-<div class="card"><h3>TODAY</h3><ul class="today">
-<li><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/></svg>Date<span id="todayDate">–</span></li>
-<li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Time<span id="todayTime">–</span></li>
-<li><svg viewBox="0 0 24 24"><path d="M17.5 18a4.5 4.5 0 0 0 .4-9A6 6 0 0 0 6.2 10.5 3.5 3.5 0 0 0 7 17.5z"/></svg>Weather<span id="todayWeather">28°C, Clear Sky</span></li>
-<li><svg viewBox="0 0 24 24"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>Location<span>Karachi, Pakistan</span></li>
+<div class="card"><h3 data-i18n="today">TODAY</h3><ul class="today">
+<li><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/></svg><span data-i18n="date">Date</span><span class="val" id="todayDate">–</span></li>
+<li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span data-i18n="time">Time</span><span class="val" id="todayTime">–</span></li>
+<li><svg viewBox="0 0 24 24"><path d="M17.5 18a4.5 4.5 0 0 0 .4-9A6 6 0 0 0 6.2 10.5 3.5 3.5 0 0 0 7 17.5z"/></svg><span data-i18n="weather">Weather</span><span class="val" id="todayWeather">28°C, Clear Sky</span></li>
+<li><svg viewBox="0 0 24 24"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span data-i18n="location">Location</span><span class="val">Karachi, Pakistan</span></li>
 </ul></div>
 </div>
 </div>
 
 <div class="bottom">
 <div class="ask"><button class="mic" id="micBtn" title="Voice">🎤</button>
-<input id="cmdInput" placeholder="How can I help you, Sir?" onkeydown="if(event.key==='Enter')sendCmd()">
-<button class="send" onclick="sendCmd()">Ask</button></div>
+<input id="cmdInput" data-i18n-ph="askPh" placeholder="How can I help you, Sir?" onkeydown="if(event.key==='Enter')sendCmd()">
+<button class="send" onclick="sendCmd()" data-i18n="askBtn">Ask</button></div>
 <div class="reply" id="reply">All systems ready, Sir.</div>
 </div></div>
 
 <!-- QR overlay -->
 <div class="overlay" id="qrCard"><div class="panel"><button class="close" onclick="closePanels()">✕</button>
-<h3>CONNECT PHONE — SCAN ONCE (OPTIONAL)</h3>
+<h3 data-i18n="qrTitle">CONNECT PHONE — SCAN ONCE (OPTIONAL)</h3>
 <p style="text-align:center"><img id="qrImg" src="/api/qr.png" alt="Scan to connect phone" style="width:150px;height:150px;background:#fff;padding:6px;border-radius:8px"></p>
-<p style="text-align:center;margin-top:10px">Phone camera se scan karo —<br>no IP typing, no new code.<br>Pair code: <b id="pairCode" style="color:#fff">…</b></p>
-<p style="text-align:center;color:#9fc6d8;font-size:12px;margin-top:6px">Optional hai — bina phone ke bhi Jarvis PC pe poora chalta hai.</p></div></div>
+<p style="text-align:center;margin-top:10px"><span data-i18n-html="qrText">Phone camera se scan karo —<br>no IP typing, no new code.</span><br><span data-i18n="pairCode">Pair code:</span> <b id="pairCode" style="color:#fff">…</b></p>
+<p style="text-align:center;color:#9fc6d8;font-size:12px;margin-top:6px" data-i18n="qrNote">Optional hai — bina phone ke bhi Jarvis PC pe poora chalta hai.</p></div></div>
 
 <!-- Settings overlay -->
 <div class="overlay" id="settingsPanel"><div class="panel"><button class="close" onclick="closePanels()">✕</button>
-<h3>SETTINGS — API &amp; SYNC</h3>
-<p>API key yahan daalo — sirf aapke laptop pe save hoti hai, chat mein kabhi mat bhejo. Mobile se badlo to PC pe bhi update ho jayega, aur PC se badlo to mobile pe.</p>
-<p style="margin-top:10px"><input id="apiKey" type="password" placeholder="API key (sk-...)">
-<input id="apiBase" type="text" placeholder="https://api.openai.com/v1">
-<input id="apiModel" type="text" placeholder="gpt-4o-mini"></p>
-<p style="margin-top:6px"><label style="display:block;margin-bottom:10px"><input type="checkbox" id="phoneLink" checked style="width:auto"> Connect phone to PC (optional — PC pe Jarvis bina phone ke bhi poora chalta hai)</label>
-<button class="save" onclick="saveSettings()">Save Settings</button>
+<h3 data-i18n="settingsTitle">SETTINGS — API &amp; SYNC</h3>
+<p data-i18n="settingsIntro">API key yahan daalo — sirf aapke laptop pe save hoti hai, chat mein kabhi mat bhejo. Mobile se badlo to PC pe bhi update ho jayega, aur PC se badlo to mobile pe.</p>
+<p style="margin-top:10px"><input id="apiKey" type="password" data-i18n-ph="apiKeyPh" placeholder="API key (sk-...)">
+<input id="apiBase" type="text" data-i18n-ph="apiBasePh" placeholder="https://api.openai.com/v1">
+<input id="apiModel" type="text" data-i18n-ph="apiModelPh" placeholder="gpt-4o-mini"></p>
+<p style="margin-top:6px"><label style="display:block;margin-bottom:10px"><input type="checkbox" id="phoneLink" checked style="width:auto"> <span data-i18n="phoneLink">Connect phone to PC (optional — PC pe Jarvis bina phone ke bhi poora chalta hai)</span></label>
+<label style="display:block;margin-bottom:10px"><span data-i18n="language">Language</span> <select id="uiLang" style="margin-left:8px;padding:8px;border-radius:8px;border:1px solid rgba(125,216,255,.35);background:#06121a;color:#fff"></select></label>
+<button class="save" onclick="saveSettings()" data-i18n="saveBtn">Save Settings</button>
 <span id="syncState" style="margin-left:8px;color:#5df2a6;font-size:12px">● Synced</span></p></div></div>
 
+<script src="i18n.js"></script>
 <script>
+fillLangSelect();
+applyLang(savedLang()||"en",false);
 const API=(window.JARVIS_API||"").replace(/\/$/,"");
 /* particles: blue dust drifting up around the robot, like the video */
 const cv=document.getElementById('particles'),cx=cv.getContext('2d');let PW,PH,pts=[];
@@ -234,21 +238,22 @@ document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{
 function openQr(){if(!phoneLinkEnabled){document.getElementById('reply').textContent='Jarvis: Phone link is off — turn it on in Settings.';return;}openPanel('qrCard');}
 fetch(API+'/api/pair').then(r=>r.json()).then(j=>{phoneLinkEnabled=j.enabled!==false;if(j.enabled===false)return;document.getElementById('pairCode').textContent=j.pair_token||'';}).catch(()=>{document.getElementById('pairCode').textContent='start server';});
 /* settings */
-async function loadSettings(){try{const r=await fetch(API+'/api/settings');const s=await r.json();if(s.llm_base_url&&document.getElementById('apiBase').value!==s.llm_base_url)document.getElementById('apiBase').value=s.llm_base_url;if(s.llm_model&&document.getElementById('apiModel').value!==s.llm_model)document.getElementById('apiModel').value=s.llm_model;document.getElementById('phoneLink').checked=s.phone_link_enabled!==false;phoneLinkEnabled=s.phone_link_enabled!==false;document.getElementById('syncState').textContent=s.llm_api_key_set?('● Synced • key '+s.llm_api_key_masked):'● Synced • no key yet';}catch(e){document.getElementById('syncState').textContent='○ Not connected';}}
-async function saveSettings(){const b={from:'pc',llm_base_url:document.getElementById('apiBase').value.trim(),llm_model:document.getElementById('apiModel').value.trim(),phone_link_enabled:document.getElementById('phoneLink').checked};const k=document.getElementById('apiKey').value.trim();if(k)b.llm_api_key=k;try{const r=await fetch(API+'/api/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});const j=await r.json();document.getElementById('reply').textContent=j.ok?'Jarvis: Settings saved and synced to phone.':'Jarvis: Settings could not be saved.';document.getElementById('apiKey').value='';loadSettings();}catch(e){document.getElementById('reply').textContent='Jarvis: Not connected — start the server first.';}}
+async function loadSettings(){try{const r=await fetch(API+'/api/settings');const s=await r.json();if(s.llm_base_url&&document.getElementById('apiBase').value!==s.llm_base_url)document.getElementById('apiBase').value=s.llm_base_url;if(s.llm_model&&document.getElementById('apiModel').value!==s.llm_model)document.getElementById('apiModel').value=s.llm_model;document.getElementById('phoneLink').checked=s.phone_link_enabled!==false;phoneLinkEnabled=s.phone_link_enabled!==false;if(s.ui_language){applyLang(s.ui_language,false);}document.getElementById('syncState').textContent=s.llm_api_key_set?(T('syncedKey')+s.llm_api_key_masked):T('syncedNoKey');}catch(e){document.getElementById('syncState').textContent='○ Not connected';}}
+async function saveSettings(){const b={from:'pc',llm_base_url:document.getElementById('apiBase').value.trim(),llm_model:document.getElementById('apiModel').value.trim(),phone_link_enabled:document.getElementById('phoneLink').checked,ui_language:document.getElementById('uiLang').value};const k=document.getElementById('apiKey').value.trim();if(k)b.llm_api_key=k;try{const r=await fetch(API+'/api/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});const j=await r.json();document.getElementById('reply').textContent=j.ok?T('settingsSaved'):T('settingsFailed');document.getElementById('apiKey').value='';loadSettings();}catch(e){document.getElementById('reply').textContent=T('notConnected');}}
 loadSettings();setInterval(loadSettings,5000);
+document.getElementById('uiLang').addEventListener('change',e=>{applyLang(e.target.value,true);saveSettings();});
 /* weather (guard: never show raw HTML) */
 fetch('https://wttr.in/Karachi?format=%t+%C').then(r=>r.text()).then(t=>{if(t&&!t.trim().startsWith('<')){document.getElementById('todayWeather').textContent=t;document.getElementById('topWeather').textContent=t+' • Karachi';}}).catch(()=>{});
 function localReply(c){c=c.toLowerCase();if(c.includes('time'))return "It's "+new Date().toLocaleTimeString();if(c.includes('date'))return "Today is "+new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});return "Done: '"+c+"'. Start jarvis_server.py and this will control the real PC. See API.md.";}
 async function sendCmd(cmd){cmd=cmd||document.getElementById('cmdInput').value.trim();if(!cmd)return;
- document.getElementById('reply').textContent='Jarvis: thinking…';
+ document.getElementById('reply').textContent=T('thinking');
  try{const r=await fetch(API+'/api/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({command:cmd})});if(!r.ok)throw 0;const j=await r.json();document.getElementById('reply').textContent='Jarvis: '+j.reply;}
  catch(e){document.getElementById('reply').textContent='Jarvis: '+localReply(cmd);}
  document.getElementById('cmdInput').value='';}
 document.querySelectorAll('[data-cmd]').forEach(b=>b.onclick=()=>sendCmd(b.dataset.cmd));
 document.getElementById('micBtn').onclick=()=>{
  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
- if(!SR){alert('Voice needs Chrome or Edge. Type your command instead.');return;}
- const r=new SR();r.lang='en-US';document.getElementById('listenState').textContent='Listening… speak now.';
- r.onresult=e=>{sendCmd(e.results[0][0].transcript)};r.onend=()=>{document.getElementById('listenState').textContent='Tap the microphone and speak, or type below.';};r.start();};
+ if(!SR){alert(T('voiceNeeds'));return;}
+ const r=new SR();r.lang='en-US';document.getElementById('listenState').textContent=T('listeningNow');
+ r.onresult=e=>{sendCmd(e.results[0][0].transcript)};r.onend=()=>{document.getElementById('listenState').textContent=T('listenHint');};r.start();};
 </script></body></html>
