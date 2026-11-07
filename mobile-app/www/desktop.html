@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JARVIS — Your AI Assistant</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:#000;color:#e8f2f8;font-family:Inter,'Segoe UI',Arial,sans-serif;overflow:hidden}
+/* The video IS the UI — full screen, looping */
+#bgvideo{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.shade{position:fixed;inset:0;z-index:1;background:linear-gradient(180deg,rgba(0,0,0,.55),transparent 22%,transparent 62%,rgba(0,0,0,.72));pointer-events:none}
+.ui{position:relative;z-index:2;height:100vh;display:flex;flex-direction:column}
+.top{display:flex;justify-content:space-between;align-items:center;padding:16px 28px}
+.brand{font-size:18px;letter-spacing:8px;color:#fff;font-weight:600}
+.brand span{color:#7dd8ff;font-weight:400}
+.clock{text-align:center}
+.clock b{font-size:24px;font-weight:500;color:#fff;letter-spacing:2px;display:block}
+.clock small{color:#9fc6d8;letter-spacing:3px;font-size:11px;text-transform:uppercase}
+.meta{font-size:12px;letter-spacing:2px;color:#9fc6d8;text-align:right}
+.meta b{color:#5df2a6;font-weight:500}
+.mid{flex:1;display:flex;justify-content:space-between;align-items:flex-end;padding:0 28px 18px;gap:20px}
+.col{width:280px}
+.card{background:rgba(2,12,22,.58);border:1px solid rgba(125,216,255,.28);border-radius:12px;padding:14px 16px;margin-bottom:12px;backdrop-filter:blur(8px)}
+.card h3{font-size:11px;letter-spacing:2.5px;color:#7dd8ff;font-weight:600;margin-bottom:10px}
+.card p,.card li{font-size:13px;line-height:1.65;color:#cfe6f2}
+.card ul{list-style:none}.card li{padding:4px 0;border-bottom:1px solid rgba(125,216,255,.12)}
+.card li:last-child{border-bottom:0}
+.card li span{float:right;color:#fff}
+.btn{display:block;width:100%;text-align:left;background:transparent;border:0;border-bottom:1px solid rgba(125,216,255,.12);color:#e8f2f8;padding:10px 2px;font-size:13px;letter-spacing:1px;cursor:pointer}
+.btn:last-child{border-bottom:0}
+.btn:hover{color:#fff;padding-left:6px}
+.wave{height:44px;display:flex;align-items:center;gap:3px}
+.wave i{width:3px;background:#00bfff;border-radius:2px;animation:w 1s ease-in-out infinite}
+@keyframes w{0%,100%{height:8px}50%{height:38px}}
+.bar{margin:8px 0}.bar label{display:flex;justify-content:space-between;font-size:12px}
+.track{height:6px;background:rgba(255,255,255,.14);border-radius:3px;margin-top:4px}.fill{height:100%;background:#00bfff;border-radius:3px;transition:width .8s}
+.bottom{padding:0 28px 20px}
+.ask{display:flex;gap:12px;align-items:center;max-width:760px;margin:0 auto;background:rgba(2,12,22,.72);border:1px solid rgba(125,216,255,.4);border-radius:40px;padding:8px 10px 8px 8px;backdrop-filter:blur(10px)}
+.ask input{flex:1;background:transparent;border:0;outline:0;color:#fff;font-size:16px;padding:0 8px}
+.mic{width:46px;height:46px;flex:none;border-radius:50%;border:1px solid #00bfff;background:rgba(0,120,200,.35);color:#fff;font-size:18px;cursor:pointer}
+.send{flex:none;background:#e8f2f8;border:0;color:#00121f;padding:12px 22px;border-radius:24px;font-weight:600;cursor:pointer;font-size:14px}
+.reply{max-width:760px;margin:10px auto 0;text-align:center;color:#9fd8ef;font-size:13px;min-height:18px}
+@media(max-width:900px){body{overflow:auto}.ui{height:auto;min-height:100vh}.mid{flex-direction:column;align-items:stretch}.col{width:100%}.clock b{font-size:19px}}
+</style></head><body>
+<video id="bgvideo" src="assets/jarvis.mp4" poster="assets/robot.jpg" autoplay muted loop playsinline></video>
+<div class="shade"></div>
+<div class="ui">
+<header class="top">
+<div class="brand">JARVIS <span>AI ASSISTANT</span></div>
+<div class="clock"><b id="clock">--:--:--</b><small id="dateLine">Loading date</small></div>
+<div class="meta"><b>● ONLINE</b><br><span id="topWeather">Karachi, Pakistan</span></div>
+</header>
+
+<div class="mid">
+<div class="col">
+<div class="card"><h3>LISTENING</h3><div class="wave" id="wave"></div><p id="listenState">Tap the microphone and speak, or type below.</p></div>
+<div class="card"><h3>COMMANDS</h3>
+<button class="btn" data-cmd="open chrome">Open Apps</button>
+<button class="btn" data-cmd="search jarvis on google">Search Web</button>
+<button class="btn" data-cmd="system info">Control System</button>
+<button class="btn" data-cmd="play lofi music">Play Music</button>
+<button class="btn" data-cmd="weather karachi">Get Information</button>
+<button class="btn" data-cmd="open downloads">Manage Files</button>
+<button class="btn" data-cmd="note test note from Jarvis">Automate Tasks</button>
+</div>
+<div class="card" id="qrCard"><h3>CONNECT PHONE — SCAN ONCE (OPTIONAL)</h3>
+<p style="text-align:center"><img id="qrImg" src="/api/qr.png" alt="Scan to connect phone" style="width:150px;height:150px;background:#fff;padding:6px;border-radius:8px"></p>
+<p style="text-align:center">Phone camera se scan karo —<br>no IP typing, no new code.<br>Pair code: <b id="pairCode" style="color:#fff">…</b></p>
+<p style="text-align:center;color:#9fc6d8;font-size:12px">Optional hai — bina phone ke bhi Jarvis PC pe poora chalta hai.</p></div>
+<div class="card"><h3>SETTINGS — API &amp; SYNC</h3>
+<p>API key yahan daalo — sirf aapke laptop pe save hoti hai, chat mein kabhi mat bhejo. Mobile se badlo to PC pe bhi update ho jayega, aur PC se badlo to mobile pe.</p>
+<p style="margin-top:8px"><input id="apiKey" type="password" placeholder="API key (sk-...)" style="width:100%;padding:9px;border-radius:8px;border:1px solid rgba(125,216,255,.35);background:#06121a;color:#fff;margin-bottom:6px">
+<input id="apiBase" type="text" placeholder="https://api.openai.com/v1" style="width:100%;padding:9px;border-radius:8px;border:1px solid rgba(125,216,255,.35);background:#06121a;color:#fff;margin-bottom:6px">
+<input id="apiModel" type="text" placeholder="gpt-4o-mini" style="width:100%;padding:9px;border-radius:8px;border:1px solid rgba(125,216,255,.35);background:#06121a;color:#fff"></p>
+<p style="margin-top:8px"><label style="display:block;margin-bottom:8px"><input type="checkbox" id="phoneLink" checked> Connect phone to PC (optional — PC pe Jarvis bina phone ke bhi poora chalta hai)</label>
+<button onclick="saveSettings()" style="padding:10px 18px;border-radius:20px;border:0;background:#e8f2f8;font-weight:700;cursor:pointer">Save Settings</button>
+<span id="syncState" style="margin-left:8px;color:#5df2a6;font-size:12px">● Synced</span></p></div></div>
+
+<div class="col" style="text-align:right">
+<div class="card" style="text-align:left"><h3>SYSTEM STATUS</h3>
+<div class="bar"><label><span>CPU</span><span id="cpuV">24%</span></label><div class="track"><div class="fill" id="cpuB" style="width:24%"></div></div></div>
+<div class="bar"><label><span>RAM</span><span id="ramV">42%</span></label><div class="track"><div class="fill" id="ramB" style="width:42%"></div></div></div>
+<div class="bar"><label><span>STORAGE</span><span id="stoV">61%</span></label><div class="track"><div class="fill" id="stoB" style="width:61%"></div></div></div>
+<div class="bar"><label><span>NETWORK</span><span id="netV">86%</span></label><div class="track"><div class="fill" id="netB" style="width:86%"></div></div></div>
+</div>
+<div class="card" style="text-align:left"><h3>TODAY</h3><ul>
+<li>Date <span id="todayDate">–</span></li>
+<li>Time <span id="todayTime">–</span></li>
+<li>Weather <span id="todayWeather">28°C, Clear Sky</span></li>
+<li>Location <span>Karachi, Pakistan</span></li>
+</ul></div>
+</div></div>
+
+<div class="bottom">
+<div class="ask"><button class="mic" id="micBtn" title="Voice">🎤</button>
+<input id="cmdInput" placeholder="How can I help you, Sir?" onkeydown="if(event.key==='Enter')sendCmd()">
+<button class="send" onclick="sendCmd()">Ask</button></div>
+<div class="reply" id="reply">All systems ready, Sir.</div>
+</div></div>
+
+<script>
+const API=(window.JARVIS_API||"").replace(/\/$/,"");
+const wave=document.getElementById('wave');
+for(let i=0;i<32;i++){const b=document.createElement('i');b.style.animationDelay=(i*0.06)+'s';b.style.height=(8+Math.random()*30)+'px';wave.appendChild(b);}
+function tick(){const d=new Date();document.getElementById('clock').textContent=d.toLocaleTimeString('en-GB');document.getElementById('dateLine').textContent=d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});document.getElementById('todayDate').textContent=d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});document.getElementById('todayTime').textContent=d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});}
+tick();setInterval(tick,1000);
+async function refreshStatus(){try{const r=await fetch(API+'/api/status');if(!r.ok)throw 0;const s=await r.json();setBar('cpu',s.cpu);setBar('ram',s.ram);setBar('sto',s.storage);setBar('net',s.network);if(s.weather)document.getElementById('todayWeather').textContent=s.weather;}catch(e){}}
+function setBar(k,v){document.getElementById(k+'V').textContent=v+'%';document.getElementById(k+'B').style.width=v+'%';}
+refreshStatus();setInterval(refreshStatus,4000);
+fetch(API+'/api/pair').then(r=>r.json()).then(j=>{if(j.enabled===false){document.getElementById('qrCard').style.display='none';return;}document.getElementById('pairCode').textContent=j.pair_token||'';}).catch(()=>{document.getElementById('pairCode').textContent='start server';});
+async function loadSettings(){try{const r=await fetch(API+'/api/settings');const s=await r.json();if(s.llm_base_url&&document.getElementById('apiBase').value!==s.llm_base_url)document.getElementById('apiBase').value=s.llm_base_url;if(s.llm_model&&document.getElementById('apiModel').value!==s.llm_model)document.getElementById('apiModel').value=s.llm_model;document.getElementById('phoneLink').checked=s.phone_link_enabled!==false;document.getElementById('qrCard').style.display=s.phone_link_enabled===false?'none':'';document.getElementById('syncState').textContent=s.llm_api_key_set?('● Synced • key '+s.llm_api_key_masked):'● Synced • no key yet';}catch(e){document.getElementById('syncState').textContent='○ Not connected';}}
+async function saveSettings(){const b={from:'pc',llm_base_url:document.getElementById('apiBase').value.trim(),llm_model:document.getElementById('apiModel').value.trim(),phone_link_enabled:document.getElementById('phoneLink').checked};const k=document.getElementById('apiKey').value.trim();if(k)b.llm_api_key=k;try{const r=await fetch(API+'/api/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});const j=await r.json();document.getElementById('reply').textContent=j.ok?'Jarvis: Settings saved and synced to phone.':'Jarvis: Settings could not be saved.';document.getElementById('apiKey').value='';loadSettings();}catch(e){document.getElementById('reply').textContent='Jarvis: Not connected — start the server first.';}}
+loadSettings();setInterval(loadSettings,5000);
+fetch('https://wttr.in/Karachi?format=%t+%C').then(r=>r.text()).then(t=>{document.getElementById('todayWeather').textContent=t;document.getElementById('topWeather').textContent=t+' • Karachi';}).catch(()=>{});
+function localReply(c){c=c.toLowerCase();if(c.includes('time'))return "It's "+new Date().toLocaleTimeString();if(c.includes('date'))return "Today is "+new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});return "Done: '"+c+"'. Start jarvis_server.py and this will control the real PC. See API.md.";}
+async function sendCmd(cmd){cmd=cmd||document.getElementById('cmdInput').value.trim();if(!cmd)return;
+ document.getElementById('reply').textContent='Jarvis: thinking…';
+ try{const r=await fetch(API+'/api/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({command:cmd})});if(!r.ok)throw 0;const j=await r.json();document.getElementById('reply').textContent='Jarvis: '+j.reply;}
+ catch(e){document.getElementById('reply').textContent='Jarvis: '+localReply(cmd);}
+ document.getElementById('cmdInput').value='';}
+document.querySelectorAll('[data-cmd]').forEach(b=>b.onclick=()=>sendCmd(b.dataset.cmd));
+document.getElementById('micBtn').onclick=()=>{
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR){alert('Voice needs Chrome or Edge. Type your command instead.');return;}
+ const r=new SR();r.lang='en-US';document.getElementById('listenState').textContent='Listening… speak now.';
+ r.onresult=e=>{sendCmd(e.results[0][0].transcript)};r.onend=()=>{document.getElementById('listenState').textContent='Tap the microphone and speak, or type below.';};r.start();};
+document.getElementById('bgvideo').addEventListener('click',()=>{const v=document.getElementById('bgvideo');v.paused?v.play():v.pause();});
+</script></body></html>
