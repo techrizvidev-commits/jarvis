@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JARVIS Mobile — Your AI Assistant</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#000;color:#e8f2f8;font-family:Inter,'Segoe UI',Arial,sans-serif}
+.hero{position:relative;height:52vh;overflow:hidden}
+.hero video{width:100%;height:100%;object-fit:cover}
+.hero .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.35),transparent 40%,rgba(0,0,0,.75))}
+.hero .top{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;padding:16px;font-size:12px;letter-spacing:2px}
+.hero .top b{color:#fff;letter-spacing:6px;font-size:15px}
+.hero .clock{position:absolute;left:0;right:0;bottom:14px;text-align:center}
+.hero .clock b{font-size:26px;color:#fff;letter-spacing:2px}
+.hero .clock small{display:block;color:#9fc6d8;letter-spacing:3px;font-size:11px;text-transform:uppercase}
+.wrap{padding:16px}
+.card{background:rgba(255,255,255,.04);border:1px solid rgba(125,216,255,.22);border-radius:12px;padding:14px 16px;margin-bottom:12px}
+.card h3{font-size:11px;letter-spacing:2.5px;color:#7dd8ff;font-weight:600;margin-bottom:10px}
+.card p{font-size:13px;line-height:1.6;color:#cfe6f2}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid button{border:1px solid rgba(125,216,255,.28);background:rgba(255,255,255,.04);color:#e8f2f8;border-radius:10px;padding:15px 8px;font-size:14px}
+input{width:100%;padding:14px;border-radius:12px;border:1px solid rgba(125,216,255,.35);background:#06121a;color:#fff;font-size:16px}
+.row{display:flex;gap:8px;margin-top:10px}.row button{flex:1;padding:14px;border-radius:12px;border:0;background:#e8f2f8;color:#00121f;font-weight:600;font-size:15px}
+.row button.ghost{background:transparent;border:1px solid rgba(125,216,255,.4);color:#fff}
+.bar{height:6px;background:rgba(255,255,255,.14);border-radius:3px;margin:5px 0 10px}.fill{height:100%;background:#00bfff;border-radius:3px}
+#reply{color:#9fd8ef;min-height:28px;margin:4px 0}
+#inbox div{background:rgba(255,255,255,.04);border-radius:8px;padding:10px;margin:6px 0}
+small{color:#8aa8b8}
+</style></head><body><div id="connectBox" style="display:none;position:fixed;inset:0;z-index:1000;background:#000;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center">
+<div style="font-size:22px;letter-spacing:8px">JARVIS</div>
+<div style="color:#7dd8ff">CONNECT TO YOUR LAPTOP (once only)</div>
+<p style="color:#cfe6f2;font-size:13px;line-height:1.6">Laptop pe JARVIS chal raha ho, aur dono same Wi-Fi pe hon.<br>Laptop ka IP likho — jaise 192.168.1.5 — ya QR scan karo.</p>
+<input id="serverInput" placeholder="192.168.1.5" style="max-width:280px;text-align:center">
+<div id="qrReader" style="width:280px"></div>
+<div class="row" style="max-width:280px;width:100%"><button onclick="saveServer()">Connect</button><button class="ghost" onclick="startScan()">Scan QR</button></div>
+<p><small>Tip: laptop HUD pe CONNECT PHONE card mein QR code hai.<br>Ye sirf pehli dafa hai — phir app khud connect hoti hai.</small></p></div>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+<div class="hero">
+<video src="assets/jarvis.mp4" poster="assets/robot.jpg" autoplay muted loop playsinline></video>
+<div class="shade"></div>
+<div class="top"><span><b>JARVIS</b></span><span id="conn">● ONLINE</span></div>
+<div class="clock"><b id="clock">--:--:--</b><small id="dateLine">—</small></div>
+</div>
+<div class="wrap">
+<input id="cmd" placeholder="How can I help you, Sir?" onkeydown="if(event.key==='Enter')send()">
+<div class="row"><button onclick="send()">Ask Jarvis</button><button class="ghost" onclick="voice()">Voice</button></div>
+<div id="reply"></div>
+
+<div class="card"><h3>COMMANDS</h3><div class="grid">
+<button onclick="go('open youtube')">Play Music</button><button onclick="go('open chrome')">Open Apps</button>
+<button onclick="go('volume 50')">Volume 50</button><button onclick="go('volume up')">Volume +</button>
+<button onclick="go('brightness 70')">Brightness 70</button><button onclick="go('screenshot')">Screenshot</button>
+<button onclick="go('system info')">System Info</button><button onclick="go('lock screen')">Lock PC</button>
+</div></div>
+
+<div class="card"><h3>PHONE</h3><div class="grid">
+<button onclick="phoneSelf('torch')">Torch</button><button onclick="phoneSelf('vibrate')">Vibrate</button>
+<button onclick="phoneSelf('beep')">Beep</button><button onclick="phoneSelf('flash')">Flash</button>
+</div><p style="margin-top:10px" id="batt">Battery: —</p></div>
+
+<div class="card"><h3>SETTINGS — API &amp; SYNC</h3>
+<p>API key yahan daalo — sirf laptop pe save hoti hai. PC se badlo to yahan bhi update ho jayega.</p>
+<input id="apiKey" type="password" placeholder="API key (sk-...)" style="margin-top:8px">
+<input id="apiBase" type="text" placeholder="https://api.openai.com/v1" style="margin-top:8px">
+<input id="apiModel" type="text" placeholder="gpt-4o-mini" style="margin-top:8px">
+<p style="margin-top:8px"><label><input type="checkbox" id="phoneLink" checked style="width:auto"> Connect phone to PC (optional)</label></p>
+<div class="row"><button onclick="saveSettings()">Save Settings</button></div>
+<p style="margin-top:8px"><small id="syncState">● Synced</small></p></div>
+
+<div class="card"><h3>SYSTEM STATUS</h3><div id="status">Loading…</div></div>
+<div class="card"><h3>TODAY</h3><div id="today" style="line-height:1.8">—</div></div>
+<div class="card"><h3>FROM LAPTOP</h3><div id="inbox"><small>No messages yet.</small></div>
+<button style="width:100%;margin-top:8px;padding:10px;border-radius:8px;border:1px solid rgba(125,216,255,.4);background:transparent;color:#fff" onclick="loadInbox()">Refresh inbox</button></div>
+<p style="text-align:center;padding:10px"><small>Same Wi-Fi as laptop • API: see API.md • Add to Home Screen = your app</small></p>
+</div>
+<script>
+
+// JARVIS app connect: saved laptop server, or ask once.
+(function(){try{var s=localStorage.getItem('jarvis_server');if(s){window.JARVIS_API=s;}}catch(e){}})();
+function saveServer(){var v=document.getElementById('serverInput').value.trim();if(!v)return alert('Laptop IP likho, jaise 192.168.1.5');if(v.indexOf('http')!==0)v='http://'+v;if(v.indexOf(':5000')<0)v=v.replace(/\/$/,'')+':5000';try{localStorage.setItem('jarvis_server',v);}catch(e){}window.JARVIS_API=v;document.getElementById('connectBox').style.display='none';status();loadSettings();reply('Connected to laptop.');}
+function startScan(){if(typeof Html5Qrcode==='undefined')return alert('QR scan needs internet once — ya IP type kar do.');var h=new Html5Qrcode('qrReader');h.start({facingMode:'environment'},{fps:10,qrbox:220},function(txt){try{h.stop();}catch(e){}var m=txt.match(/https?:\/\/[^\s'"]+/);if(m){document.getElementById('serverInput').value=m[0].replace('http://','').replace(':5000/mobile.html','').replace('/mobile.html','');saveServer();}},function(){}).catch(function(){alert('Camera nahi khuli — IP type kar do.');});}
+window.addEventListener('load',function(){setTimeout(function(){if(!window.JARVIS_API){document.getElementById('connectBox').style.display='flex';}},600);});
+
+const API=(window.JARVIS_API||"").replace(/\/$/,"");
+function tick(){const d=new Date();document.getElementById('clock').textContent=d.toLocaleTimeString();document.getElementById('dateLine').textContent=d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});document.getElementById('today').innerHTML=d.toLocaleDateString('en-GB',{weekday:'short',month:'short',day:'numeric',year:'numeric'})+'<br>'+d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})+'<br>Karachi, Pakistan';}tick();setInterval(tick,1000);
+let torchOn=false;
+async function phoneSelf(a){
+ if(a==='vibrate'){navigator.vibrate&&navigator.vibrate([200,100,200]);return reply('Phone: vibrating.');}
+ if(a==='beep'){const c=new AudioContext();const o=c.createOscillator();o.connect(c.destination);o.start();setTimeout(()=>o.stop(),600);return reply('Phone: beep.');}
+ if(a==='flash'){document.body.style.background='#fff';setTimeout(()=>document.body.style.background='',200);return reply('Phone: flash.');}
+ if(a==='torch'){try{const s=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});const t=s.getVideoTracks()[0];await t.applyConstraints({advanced:[{torch:!torchOn}]});torchOn=!torchOn;if(!torchOn)t.stop();return reply('Phone: torch '+(torchOn?'ON':'OFF')+'.');}catch(e){return reply('Phone: torch needs camera permission.');}}
+}
+function reply(t){document.getElementById('reply').innerHTML='<b>Jarvis:</b> '+t;}
+async function go(c){send(c)}
+async function send(c){c=c||document.getElementById('cmd').value.trim();if(!c)return;reply('thinking…');
+ try{const r=await fetch(API+'/api/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({command:c,from:'phone'})});const j=await r.json();reply(j.reply);}
+ catch(e){reply('Not connected — same Wi-Fi + jarvis_server.py on laptop?');}
+ document.getElementById('cmd').value='';}
+async function status(){try{const r=await fetch(API+'/api/status');const s=await r.json();document.getElementById('conn').textContent='● CONNECTED';document.getElementById('status').innerHTML='CPU '+s.cpu+'%<div class="bar"><div class="fill" style="width:'+s.cpu+'%"></div></div>RAM '+s.ram+'%<div class="bar"><div class="fill" style="width:'+s.ram+'%"></div></div>STORAGE '+s.storage+'%<div class="bar"><div class="fill" style="width:'+s.storage+'%"></div></div>';}catch(e){document.getElementById('conn').textContent='○ NOT CONNECTED';}}
+async function reportBattery(){try{const b=await navigator.getBattery();const pct=Math.round(b.level*100);document.getElementById('batt').textContent='Battery: '+pct+'%'+(b.charging?' (charging)':'');await fetch(API+'/api/phone-status',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({battery:pct,charging:b.charging})});}catch(e){}}
+async function loadInbox(){try{const r=await fetch(API+'/api/inbox');const j=await r.json();if(j.messages&&j.messages.length){document.getElementById('inbox').innerHTML=j.messages.slice(-5).reverse().map(m=>'<div>'+m.text+'<br><small>'+m.time+'</small></div>').join('');}}catch(e){}}
+let phonePin = "";
+function showPhoneLock(){let o=document.getElementById('phonelock');if(!o){o=document.createElement('div');o.id='phonelock';o.style.cssText='position:fixed;inset:0;z-index:999;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px';o.innerHTML='<div style="font-size:22px;letter-spacing:8px">JARVIS</div><div style="color:#7dd8ff">PHONE LOCKED — enter PIN</div><input id="pinInput" type="password" inputmode="numeric" placeholder="PIN" style="width:200px;text-align:center"><button onclick="tryUnlock()" style="padding:12px 28px;border-radius:24px;border:0;background:#e8f2f8;font-weight:700">Unlock</button>';document.body.appendChild(o);}
+ o.style.display='flex';if(navigator.vibrate)navigator.vibrate(200);}
+function tryUnlock(){const v=(document.getElementById('pinInput')||{}).value||"";if(!v)return alert('Enter a PIN.');if(!phonePin){phonePin=v;const o=document.getElementById('phonelock');if(o)o.style.display='none';return reply('Phone: PIN set and unlocked. Use this PIN next time.');}if(v===phonePin){const o=document.getElementById('phonelock');if(o)o.style.display='none';reply('Phone: unlocked.');}else{alert('Wrong PIN.');}}
+async function pollPhoneCmds(){try{const r=await fetch(API+'/api/phone-commands');const j=await r.json();(j.commands||[]).forEach(c=>{if(c.action==='ring'||c.action==='beep')phoneSelf('beep');if(c.action==='vibrate')phoneSelf('vibrate');if(c.action==='torch')phoneSelf('torch');if(c.action==='flash')phoneSelf('flash');if(c.action==='open_youtube')window.open('https://youtube.com','_blank');if(c.action==='lock_phone')showPhoneLock();if(c.action==='unlock_phone'){const o=document.getElementById('phonelock');if(o)o.style.display='none';reply('Phone: unlocked from laptop.');}reply('Command from laptop: '+c.action);});}catch(e){}}
+function voice(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){alert('Voice needs Chrome on Android.');return;}const r=new SR();r.lang='en-US';r.onresult=e=>send(e.results[0][0].transcript);r.start();}
+async function loadSettings(){try{const r=await fetch(API+'/api/settings');const s=await r.json();if(s.llm_base_url&&document.getElementById('apiBase').value!==s.llm_base_url)document.getElementById('apiBase').value=s.llm_base_url;if(s.llm_model&&document.getElementById('apiModel').value!==s.llm_model)document.getElementById('apiModel').value=s.llm_model;document.getElementById('phoneLink').checked=s.phone_link_enabled!==false;document.getElementById('syncState').textContent=s.llm_api_key_set?('● Synced • key '+s.llm_api_key_masked):'● Synced • no key yet';}catch(e){document.getElementById('syncState').textContent='○ Not connected';}}
+async function saveSettings(){const b={from:'phone',llm_base_url:document.getElementById('apiBase').value.trim(),llm_model:document.getElementById('apiModel').value.trim(),phone_link_enabled:document.getElementById('phoneLink').checked};const k=document.getElementById('apiKey').value.trim();if(k)b.llm_api_key=k;try{const r=await fetch(API+'/api/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});const j=await r.json();reply(j.ok?'Settings saved and synced to PC.':'Settings could not be saved.');document.getElementById('apiKey').value='';loadSettings();}catch(e){reply('Not connected — same Wi-Fi + server on laptop?');}}
+status();loadInbox();reportBattery();loadSettings();setInterval(status,5000);setInterval(loadInbox,5000);setInterval(pollPhoneCmds,3000);setInterval(reportBattery,30000);setInterval(loadSettings,5000);
+</script></body></html>
