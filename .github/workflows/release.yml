@@ -1,0 +1,58 @@
+# JARVIS Release — push a tag like v1.0.0 and GitHub builds both downloads:
+#   Jarvis.exe  (Windows, one file — double-click, HUD opens, everything runs)
+#   Jarvis.apk  (Android, direct install — scan QR once to link the laptop)
+name: Build JARVIS Release
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build-exe:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python decode_assets.py
+      - run: pip install pyinstaller psutil pyttsx3 SpeechRecognition PyAudio Pillow pycaw comtypes pyautogui qrcode
+      - run: pyinstaller jarvis.spec
+      - run: copy dist\Jarvis.exe Jarvis.exe
+        shell: cmd
+      - uses: actions/upload-artifact@v4
+        with: {name: Jarvis-exe, path: Jarvis.exe}
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '20'}
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: '17'}
+      - run: python3 decode_assets.py
+      - run: |
+          cp ui/index.html mobile-app/www/desktop.html
+          cd mobile-app && npm ci && (npx cap add android || true) && npx cap sync android
+      - run: cd mobile-app/android && ./gradlew assembleDebug
+      - run: cp mobile-app/android/app/build/outputs/apk/debug/app-debug.apk Jarvis.apk
+      - uses: actions/upload-artifact@v4
+        with: {name: Jarvis-apk, path: Jarvis.apk}
+  release:
+    needs: [build-exe, build-apk]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with: {name: Jarvis-exe, path: .}
+      - uses: actions/download-artifact@v4
+        with: {name: Jarvis-apk, path: .}
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            Jarvis.exe
+            Jarvis.apk
+          body: |
+            ## JARVIS — download and run, nothing else to install
+            - **Windows:** download `Jarvis.exe`, double-click. The HUD opens in your browser. Phone link is optional — scan the QR code on the HUD to connect your phone.
+            - **Android:** download `Jarvis.apk`, install (allow "Install unknown apps" once), open the app, enter your laptop IP once or scan the QR code. Same Wi-Fi as the laptop.
+            - API key is optional — enter it in Settings on the HUD or in the app, never in chat.
