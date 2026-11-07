@@ -1,0 +1,11 @@
+{
+  "appId": "com.pinooo.jarvis",
+  "appName": "JARVIS",
+  "server": {
+    "allowNavigation": [
+      "*"
+    ],
+    "cleartext": true
+  },
+  "webDir": "www"
+}
