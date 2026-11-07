@@ -1,0 +1,11 @@
+# JARVIS v2 - Windows
+# Core still works with NO install. These add voice + exact volume + typing.
+psutil
+pyttsx3
+SpeechRecognition
+PyAudio
+Pillow
+pycaw
+comtypes
+pyautogui
+qrcode[pil]
