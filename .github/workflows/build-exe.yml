@@ -1,0 +1,17 @@
+name: Build Jarvis EXE (Windows)
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  build-exe:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python decode_assets.py
+      - run: pip install pyinstaller psutil pyttsx3 SpeechRecognition PyAudio Pillow pycaw comtypes pyautogui qrcode
+      - run: pyinstaller jarvis.spec
+      - uses: actions/upload-artifact@v4
+        with: {name: Jarvis-Windows-exe, path: dist/Jarvis.exe}
