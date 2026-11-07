@@ -77,8 +77,9 @@ Command examples: `what time is it`, `system info`, `open youtube`, `open word`,
   (sirf `••••1234` dikhta hai). Mobile se badlo to PC pe update, PC se badlo to
   mobile pe — dono har 5 second mein `/api/settings` se sync karte hain.
   Connect karna optional hai: bina API key ke bhi Jarvis free research se jawab deta hai.
-- `GET /api/settings` — masked key status, base URL, model, `phone_link_enabled`.
-- `POST /api/settings` `{llm_api_key, llm_base_url, llm_model, phone_link_enabled, from}` — saves to config.json.
+- `GET /api/settings` — masked key status, base URL, model, `phone_link_enabled`, `ui_language`.
+- `POST /api/settings` `{llm_api_key, llm_base_url, llm_model, phone_link_enabled, ui_language, from}` — saves to config.json.
+- UI language: `ui_language` is one of `en` (default), `ur-roman`, `ur`, `hi`, `ar`, `es`, `fr`, `de`, `tr`, `pt`, `ru`. It lives in Settings → Language, translates the whole HUD + mobile UI (Urdu/Arabic switch to right-to-left), and syncs both ways like the other settings. Strings live in `ui/i18n.js` (copied to `mobile-app/www/i18n.js` for the phone app).
 
 ### Phone link is OPTIONAL (v8.1)
 - Jarvis works **fully on the PC alone** — no phone needed at all. Phone link is
