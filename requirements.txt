@@ -1,0 +1,7 @@
+# Core Jarvis runs on Python stdlib only - no install needed for text mode.
+# Optional, for voice + live system stats:
+psutil
+pyttsx3
+SpeechRecognition
+PyAudio
+Pillow
