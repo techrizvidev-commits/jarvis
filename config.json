@@ -4,6 +4,7 @@
   "llm_model": "gpt-4o-mini",
   "name": "Jarvis",
   "phone_link_enabled": true,
+  "ui_language": "en",
   "unlock_pin": "",
   "user": "Boss",
   "voice": true,
