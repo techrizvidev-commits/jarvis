@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/app": "^6.0.0",
+    "@capacitor/core": "^6.0.0"
+  },
+  "description": "JARVIS mobile app - connects to your PC once, then controls it on the same Wi-Fi",
+  "devDependencies": {
+    "@capacitor/cli": "^6.0.0"
+  },
+  "name": "jarvis-mobile",
+  "scripts": {
+    "sync": "npx cap sync android"
+  },
+  "version": "8.1.0"
+}
