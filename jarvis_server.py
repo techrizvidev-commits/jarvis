@@ -64,8 +64,15 @@ def status():
         cpu, ram, storage, network = 24, 42, 61, 86
     try:
         import urllib.request
-        with urllib.request.urlopen("https://wttr.in/Karachi?format=%t+%C", timeout=5) as r:
+        # Ask as curl so wttr.in returns plain text, not its HTML page;
+        # drop the value entirely if HTML ever comes back.
+        req = urllib.request.Request(
+            "https://wttr.in/Karachi?format=%t+%C",
+            headers={"User-Agent": "curl/8.0"})
+        with urllib.request.urlopen(req, timeout=5) as r:
             weather = r.read().decode().strip()
+        if weather.startswith("<") or "<html" in weather[:200].lower():
+            weather = ""
     except Exception:
         weather = ""
     import platform
