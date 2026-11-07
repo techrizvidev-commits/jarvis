@@ -140,6 +140,7 @@ class H(SimpleHTTPRequestHandler):
                                "llm_base_url": cfg.get("llm_base_url", "https://api.openai.com/v1"),
                                "llm_model": cfg.get("llm_model", "gpt-4o-mini"),
                                "phone_link_enabled": cfg.get("phone_link_enabled", True),
+                               "ui_language": cfg.get("ui_language", "en"),
                                "user": cfg.get("user", "Boss"), "name": cfg.get("name", "Jarvis")})
         if self.path.startswith("/api/inbox"):
             return self._json({"messages": INBOX[-20:]})
@@ -193,6 +194,8 @@ class H(SimpleHTTPRequestHandler):
                     cfg[k] = data[k]
             if "phone_link_enabled" in data:
                 cfg["phone_link_enabled"] = bool(data["phone_link_enabled"])
+            if data.get("ui_language") in ("en", "ur-roman", "ur", "hi", "ar", "es", "fr", "de", "tr", "pt", "ru"):
+                cfg["ui_language"] = data["ui_language"]
             if data.get("llm_api_key"):
                 cfg["llm_api_key"] = data["llm_api_key"]
             (BASE / "config.json").write_text(json.dumps(cfg, indent=2))
