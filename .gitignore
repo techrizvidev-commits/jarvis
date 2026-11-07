@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+notes.txt
+reminders.txt
+screenshot-*.png
+*.log
+# Binary HUD assets are stored as .b64 in the repo (see decode_assets.py)
+ui/assets/*.mp4
+ui/assets/*.jpg
+ui/reference.jpg
+mobile-app/www/assets/
+mobile-app/android/
+mobile-app/node_modules/
+dist/
+build/
+*.egg-info/
