@@ -292,8 +292,17 @@ def handle(command: str) -> str:
         city = c.replace("weather", "").strip() or "lahore"
         try:
             import urllib.request
-            with urllib.request.urlopen(f"https://wttr.in/{city}?format=3", timeout=8) as r:
-                return r.read().decode().strip()
+            # wttr.in returns its full HTML page (not weather text) when the
+            # request looks like a browser or gets throttled, so ask as curl
+            # and never show raw HTML to the user.
+            req = urllib.request.Request(
+                f"https://wttr.in/{city}?format=3",
+                headers={"User-Agent": "curl/8.0"})
+            with urllib.request.urlopen(req, timeout=8) as r:
+                txt = r.read().decode().strip()
+            if txt.startswith("<") or "<!DOCTYPE" in txt[:200] or "<html" in txt[:200].lower():
+                return "Weather service is busy right now - try again in a bit."
+            return txt or "Weather service is busy right now - try again in a bit."
         except Exception:
             return f"Weather check needs internet - try again in a sec."
     if "shutdown" in c or "shut down" in c:
