@@ -18,7 +18,7 @@ Run on Windows:
   Phone (same Wi-Fi): http://<your-laptop-IP>:5000/mobile.html
   Your laptop IP is printed when the server starts.
 """
-import json, datetime, socket, sys
+import json, datetime, socket, sys, base64
 from pathlib import Path
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 
@@ -185,6 +185,30 @@ class H(SimpleHTTPRequestHandler):
         if self.path.startswith("/api/phone-status"):
             PHONE_STATUS.update({k: data.get(k) for k in ("battery", "charging") if k in data})
             return self._json({"ok": True})
+        if self.path.startswith("/api/upload"):
+            # File Upload panel: JSON {name, data} where data is base64 or a
+            # data: URL. Saves into ~/Downloads/JARVIS Uploads on the laptop.
+            try:
+                name = (data.get("name") or "upload.bin").strip()
+                name = Path(name).name or "upload.bin"
+                raw = data.get("data") or ""
+                if "," in raw and raw.startswith("data:"):
+                    raw = raw.split(",", 1)[1]
+                blob = base64.b64decode(raw, validate=False)
+                if len(blob) > 25 * 1024 * 1024:
+                    return self._json({"ok": False, "error": "file too large (25 MB max)"})
+                dest_dir = Path.home() / "Downloads" / "JARVIS Uploads"
+                dest_dir.mkdir(parents=True, exist_ok=True)
+                dest = dest_dir / name
+                i = 1
+                while dest.exists():
+                    dest = dest_dir / f"{dest.stem} ({i}){dest.suffix}"
+                    i += 1
+                dest.write_bytes(blob)
+                print(f"[upload] {name} -> {dest} ({len(blob)} bytes)")
+                return self._json({"ok": True, "saved": dest.name, "size": len(blob)})
+            except Exception as e:
+                return self._json({"ok": False, "error": str(e)[:120]})
         if self.path.startswith("/api/settings"):
             # Save settings from HUD or phone. The key is stored ONLY on the
             # laptop's config.json — it is never sent back in full, only masked.

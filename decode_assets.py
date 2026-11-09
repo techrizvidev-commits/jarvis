@@ -17,5 +17,9 @@ def decode(src, dst):
 if __name__ == "__main__":
     decode(BASE / "ui" / "assets" / "jarvis.mp4.b64", BASE / "ui" / "assets" / "jarvis.mp4")
     decode(BASE / "ui" / "assets" / "robot.jpg.b64", BASE / "ui" / "assets" / "robot.jpg")
+    decode(BASE / "ui" / "assets" / "helmet.jpg.b64", BASE / "ui" / "assets" / "helmet.jpg")
+    decode(BASE / "ui" / "assets" / "worldmap.jpg.b64", BASE / "ui" / "assets" / "worldmap.jpg")
     decode(BASE / "ui" / "assets" / "jarvis.mp4.b64", BASE / "mobile-app" / "www" / "assets" / "jarvis.mp4")
     decode(BASE / "ui" / "assets" / "robot.jpg.b64", BASE / "mobile-app" / "www" / "assets" / "robot.jpg")
+    decode(BASE / "ui" / "assets" / "helmet.jpg.b64", BASE / "mobile-app" / "www" / "assets" / "helmet.jpg")
+    decode(BASE / "ui" / "assets" / "worldmap.jpg.b64", BASE / "mobile-app" / "www" / "assets" / "worldmap.jpg")

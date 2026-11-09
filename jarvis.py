@@ -310,6 +310,11 @@ def handle(command: str) -> str:
     if c == "yes shutdown":
         run("shutdown /s /t 5" if SYSTEM == "Windows" else "shutdown -h +1", shell=True)
         return "Shutting down in a few seconds."
+    if c == "yes restart":
+        run("shutdown /r /t 5" if SYSTEM == "Windows" else "shutdown -r +1", shell=True)
+        return "Restarting in a few seconds."
+    if "restart" in c or "reboot" in c:
+        return "CONFIRM: type 'yes restart' to restart, or 'cancel'."
     if "joke" in c:
         return "Why did the developer go broke? Because he used up all his cache."
     if c in ("hello", "hi", "hey", "good morning", "good evening"):

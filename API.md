@@ -81,6 +81,20 @@ Command examples: `what time is it`, `system info`, `open youtube`, `open word`,
 - `POST /api/settings` `{llm_api_key, llm_base_url, llm_model, phone_link_enabled, ui_language, from}` — saves to config.json.
 - UI language: `ui_language` is one of `en` (default), `ur-roman`, `ur`, `hi`, `ar`, `es`, `fr`, `de`, `tr`, `pt`, `ru`. It lives in Settings → Language, translates the whole HUD + mobile UI (Urdu/Arabic switch to right-to-left), and syncs both ways like the other settings. Strings live in `ui/i18n.js` (copied to `mobile-app/www/i18n.js` for the phone app).
 
+### New HUD design (Iron Man helmet, cyan + gold)
+- Desktop HUD (`ui/index.html`) and mobile page (`ui/mobile.html`) rebuilt to the
+  reference design: Iron Man helmet (`ui/assets/helmet.jpg`) inside rotating
+  cyan/gold rings, SYSTEM STATUS with big clock, TASKS & REMINDERS (tap to
+  check off — saved per device), SYSTEM COMMANDS (Scan System / Initiate
+  Protocols / Analysis Mode / Reboot / Security Override), LOCATION DATA with
+  dotted world map (`ui/assets/worldmap.jpg`, Lahore, Punjab), FILE UPLOAD,
+  DATA chart + live CPU/RAM, AUDIO VISUALIZERS, and the bottom command pill.
+- `restart` / `reboot` asks for confirmation; `yes restart` restarts the PC
+  (Windows: `shutdown /r /t 5`). The REBOOT button asks in the UI first.
+- `POST /api/upload` — JSON `{name, data}` where `data` is base64 or a
+  `data:` URL (max 25 MB). Saves the file into `~/Downloads/JARVIS Uploads`
+  on the laptop. Used by the FILE UPLOAD panel on the HUD and the phone app.
+
 ### Phone link is OPTIONAL (v8.1)
 - Jarvis works **fully on the PC alone** — no phone needed at all. Phone link is
   an optional extra, controlled by the **"Connect phone to PC (optional)"**
