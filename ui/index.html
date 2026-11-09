@@ -122,6 +122,7 @@ body::before{content:"";position:fixed;inset:0;background-image:linear-gradient(
     <button title="Open apps" onclick="sendCmd('open apps')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></button>
     <button title="Lock PC" onclick="sendCmd('lock screen')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg></button>
     <button title="Weather" onclick="sendCmd('weather karachi')"><svg viewBox="0 0 24 24"><path d="M3 17l4-8 4 5 3-4 4 6 3-3"/><path d="M3 21h18"/></svg></button>
+    <button id="qrTopBtn" title="Connect Phone" onclick="openQr()"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14h1M14 20h1M20 20h1M17 17h1"/></svg></button>
     <button title="Settings" onclick="openPanel('settingsPanel')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2L14.2 3h-4l-.4 2.9a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2l.4 2.9h4l.4-2.9a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2z"/></svg></button>
   </div></div>
 
@@ -228,6 +229,7 @@ body::before{content:"";position:fixed;inset:0;background-image:linear-gradient(
 <p style="margin-top:6px"><label style="display:block;margin-bottom:10px"><input type="checkbox" id="phoneLink" checked style="width:auto"> <span data-i18n="phoneLink">Connect phone to PC (optional — Jarvis works fully on PC without a phone)</span></label>
 <label style="display:block;margin-bottom:10px"><span data-i18n="language">Language</span> <select id="uiLang" style="margin-left:8px;padding:8px;border-radius:8px;border:1px solid rgba(125,216,255,.35);background:#06121a;color:#fff"></select></label>
 <button class="save" onclick="saveSettings()" data-i18n="saveBtn">Save Settings</button>
+<button class="save" onclick="closePanels();openQr()" data-i18n="showQr" style="margin-left:8px">Show QR — Connect Phone</button>
 <span id="syncState" style="margin-left:8px;color:#5df2a6;font-size:12px">● Synced</span></p></div></div>
 
 <script src="i18n.js"></script>

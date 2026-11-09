@@ -227,14 +227,44 @@ class H(SimpleHTTPRequestHandler):
             return self._json({"ok": True, "llm_api_key_set": bool(cfg.get("llm_api_key")), "phone_link_enabled": cfg.get("phone_link_enabled", True)})
         return self._json({"error": "unknown route"}, 404)
 
+def open_app_window():
+    """Open the HUD in its own app window — no browser, no address bar.
+    Tries Edge --app, then Chrome --app (both preinstalled on Windows 10/11),
+    and falls back to the default browser only if neither exists."""
+    import subprocess, shutil, os
+    url = "http://localhost:5000"
+    candidates = []
+    for exe in ("msedge.exe", "chrome.exe"):
+        p = shutil.which(exe)
+        if p:
+            candidates.append(p)
+    for p in (r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
+              r"C:\Program Files\Microsoft\Edge\Application\msedge.exe",
+              r"C:\Program Files\Google\Chrome\Application\chrome.exe",
+              r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+              os.path.expandvars(r"%LOCALAPPDATA%\Microsoft\Edge\Application\msedge.exe"),
+              os.path.expandvars(r"%LOCALAPPDATA%\Google\Chrome\Application\chrome.exe")):
+        if os.path.exists(p) and p not in candidates:
+            candidates.append(p)
+    for exe in candidates:
+        try:
+            subprocess.Popen([exe, "--app=" + url, "--window-size=1280,860"],
+                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            print(f"[app] HUD opened in its own window ({exe})")
+            return
+        except Exception as e:
+            print(f"[app] {exe} failed: {e}")
+    import webbrowser
+    webbrowser.open(url)
+
 if __name__ == "__main__":
     ip = laptop_ip()
     print(f"\n🤖 JARVIS HUD running")
     print(f"   Laptop: http://localhost:5000")
     print(f"   Phone (same Wi-Fi): http://{ip}:5000/mobile.html")
     print(f"   Press Ctrl+C to stop.\n")
-    # One-click .exe: open the HUD in the browser automatically.
+    # One-click .exe: open the HUD in its own app window automatically.
     if getattr(sys, "frozen", False):
-        import threading, webbrowser
-        threading.Timer(1.5, lambda: webbrowser.open("http://localhost:5000")).start()
+        import threading
+        threading.Timer(1.5, open_app_window).start()
     ThreadingHTTPServer(("0.0.0.0", 5000), H).serve_forever()
